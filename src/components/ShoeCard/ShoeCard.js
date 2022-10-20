@@ -5,6 +5,17 @@ import { COLORS, WEIGHTS } from '../../constants';
 import { formatPrice, pluralize, isNewShoe } from '../../utils';
 import Spacer from '../Spacer';
 
+const VARIANTS = {
+  'on-sale': {
+    displayText: 'Sale',
+    tagColor: COLORS.primary,
+  },
+  'new-release': {
+    displayText: 'Just Released!',
+    tagColor: COLORS.secondary,
+  },
+};
+
 const ShoeCard = ({
   slug,
   name,
@@ -40,10 +51,16 @@ const ShoeCard = ({
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          {variant !== 'default' && <Variant color={VARIANTS[variant].tagColor}>
+            {VARIANTS[variant].displayText}
+          </Variant>}
+          <Price isSale={salePrice > 0}>
+            {formatPrice(price)}
+          </Price>
         </Row>
         <Row>
           <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          <SalePrice>{salePrice > 0 && formatPrice(salePrice)}</SalePrice>
         </Row>
       </Wrapper>
     </Link>
@@ -56,7 +73,9 @@ const Link = styled.a`
   flex: 1 1 340px;
 `;
 
-const Wrapper = styled.article``;
+const Wrapper = styled.article`
+  position: relative;
+`;
 
 const ImageWrapper = styled.div`
   position: relative;
@@ -77,7 +96,21 @@ const Name = styled.h3`
   color: ${COLORS.gray[900]};
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+  color: ${p => p.isSale ? COLORS.gray[700] : COLORS.gray[900]};
+  text-decoration: ${p => p.isSale && 'line-through'};
+`;
+
+const Variant = styled.span`
+  position: absolute;
+  top: 12px;
+  right: -4px;
+  padding: 7px 9px 9px 10px;
+  background-color: ${p => p.color};
+  color: ${COLORS.white};
+  font-weight: 700;
+  font-size: 0.825rem;
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
